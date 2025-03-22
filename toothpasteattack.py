@@ -24,6 +24,10 @@ clock = pygame.time.Clock()
 
 timer = 0
 
+score = 0
+
+font = pygame.font.Font("freesansbold.ttf", 20)
+
 # Player
 class Player:
     def __init__(self, velocity, movement):
@@ -73,6 +77,10 @@ is_game_over = False
 
 def game_over():
     screen.blit(game_over_img, (120, 80))
+
+def show_text(score):
+    rendered_score = font.render("Toothpaste dodged: " + score, True, (0, 0, 0))
+    screen.blit(rendered_score, (20, 20))
 
 while True:
     for event in pygame.event.get():
@@ -127,6 +135,8 @@ while True:
                 channel0.play(ToothpasteAppearSFX, 0)
                 i.rect.y = i.img.get_height() * -1
                 i.rect.x = random.randrange(0, screen.get_width() + 1)
+                score += 1
+                print(score)
 
     if not(is_game_over):
         for i in enemies:
@@ -144,6 +154,8 @@ while True:
 
     if is_game_over:
         game_over()
+    
+    show_text(str(score))
 
     timer += 1
     clock.tick(60)
