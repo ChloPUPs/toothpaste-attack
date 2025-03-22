@@ -37,7 +37,7 @@ class Enemy:
 
 player = Player([0, 0], [False, False, False, False])
 
-# Enimies
+# Enemies
 enemy1 = Enemy(-12)
 enemy2 = Enemy(-11)
 enemy3 = Enemy(-10)
