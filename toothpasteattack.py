@@ -115,7 +115,7 @@ while True:
         player.rect.y -= 4
 
     for i in enemies:
-        if timer >= 180:
+        if timer >= 120:
             i.rect.y -= i.velocity
 
     if not is_game_over:
@@ -142,7 +142,9 @@ while True:
     screen.blit(player.img, (player.rect.x, player.rect.y))
 
     if is_game_over:
+        # Draw game over
         screen.blit(game_over_img, (120, 80))
+        # Wait 2 seconds
         if timer >= 120:
             is_game_over = False
             score = 0
