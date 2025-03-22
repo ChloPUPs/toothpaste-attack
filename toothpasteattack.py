@@ -136,7 +136,6 @@ while True:
                 i.rect.y = i.img.get_height() * -1
                 i.rect.x = random.randrange(0, screen.get_width() + 1)
                 score += 1
-                print(score)
 
     if not(is_game_over):
         for i in enemies:
