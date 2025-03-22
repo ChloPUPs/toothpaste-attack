@@ -9,6 +9,11 @@ pygame.mixer.init()
 ToothpasteAppearSFX = pygame.mixer.Sound("ToothpasteAppearSFX.mp3")
 PlayerDeathSFX = pygame.mixer.Sound("PlayerDeathSFX.mp3")
 
+# Music
+pygame.mixer.music.load("Music.mp3")
+pygame.mixer.music.play(-1)
+pygame.mixer.music.set_volume(0.5)
+
 # Channels
 channel0 = pygame.mixer.Channel(0)
 channel1 = pygame.mixer.Channel(1)
@@ -126,6 +131,7 @@ while True:
     if not(is_game_over):
         for i in enemies:
             if player.rect.colliderect(i):
+                pygame.mixer.music.stop()
                 channel1.play(PlayerDeathSFX, 0)
                 is_game_over = True
 
