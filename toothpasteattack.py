@@ -20,6 +20,9 @@ channel1 = pygame.mixer.Channel(1)
 
 # Variables
 screen = pygame.display.set_mode((640, 480))
+pygame.display.set_caption("Toothpaste Attack!")
+icon = pygame.image.load("player.png")
+pygame.display.set_icon(icon)
 
 clock = pygame.time.Clock()
 
