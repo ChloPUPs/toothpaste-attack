@@ -1,10 +1,23 @@
 import pygame
 import sys
+import random
+
 pygame.init()
+
+# Sounds
+pygame.mixer.init()
+ToothpasteAppearSFX = pygame.mixer.Sound("ToothpasteAppearSFX.mp3")
+PlayerDeathSFX = pygame.mixer.Sound("PlayerDeathSFX.mp3")
+
+# Channels
+channel0 = pygame.mixer.Channel(0)
+channel1 = pygame.mixer.Channel(1)
 
 screen = pygame.display.set_mode((640, 480))
 
 clock = pygame.time.Clock()
+
+timer = 0
 
 # Player
 class Player:
@@ -14,9 +27,47 @@ class Player:
         self.img = pygame.image.load("player.png")
         self.rect = pygame.Rect(320, 360, self.img.get_width(), self.img.get_height())
 
+class Enemy:
+    def __init__(self, velocity):
+        self.velocity = velocity
+        self.img = pygame.image.load("toothpaste.png")
+        self.rect = pygame.Rect(random.randrange(0, screen.get_width() + 1), self.img.get_height() * -1, self.img.get_width(), self.img.get_height())
+
 # movement[0] = left, movement[1] = right, movement[2] = up, movement[3] = down.
 
 player = Player([0, 0], [False, False, False, False])
+
+# Enimies
+enemy1 = Enemy(-12)
+enemy2 = Enemy(-11)
+enemy3 = Enemy(-10)
+enemy4 = Enemy(-9)
+enemy5 = Enemy(-8)
+enemy6 = Enemy(-7)
+enemy7 = Enemy(-6)
+enemy8 = Enemy(-5)
+enemy9 = Enemy(-4)
+enemy10 = Enemy(-3)
+
+enemies = [
+    enemy1,
+    enemy2,
+    enemy3,
+    enemy4,
+    enemy5,
+    enemy6,
+    enemy7,
+    enemy8,
+    enemy9,
+    enemy10
+]
+
+# Game over
+game_over_img = pygame.image.load("gameovertext.png")
+is_game_over = False
+
+def game_over():
+    screen.blit(game_over_img, (120, 80))
 
 while True:
     for event in pygame.event.get():
@@ -49,6 +100,45 @@ while True:
 
     screen.fill((0, 200, 255))
 
+    if player.rect.x <= 0:
+        player.rect.x += 4
+
+    if player.rect.x >= screen.get_width() - player.img.get_width():
+        player.rect.x -= 4
+
+    if player.rect.y <= 0:
+        player.rect.y += 4
+
+    if player.rect.y >= screen.get_height() - player.img.get_height():
+        player.rect.y -= 4
+
+    for i in enemies:
+        if timer >= 60:
+            i.rect.y -= i.velocity
+
+    if not(is_game_over):
+        for i in enemies:
+            if i.rect.y >= screen.get_height():
+                channel0.play(ToothpasteAppearSFX, 0)
+                i.rect.y = i.img.get_height() * -1
+                i.rect.x = random.randrange(0, screen.get_width() + 1)
+
+    if not(is_game_over):
+        for i in enemies:
+            if player.rect.colliderect(i):
+                channel1.play(PlayerDeathSFX, 0)
+                is_game_over = True
+
+    if not(is_game_over):
+        for i in enemies:
+            if timer >= 60:
+                screen.blit(i.img, (i.rect.x, i.rect.y))
+
     screen.blit(player.img, (player.rect.x, player.rect.y))
+
+    if is_game_over:
+        game_over()
+
+    timer += 1
     clock.tick(60)
     pygame.display.update()
