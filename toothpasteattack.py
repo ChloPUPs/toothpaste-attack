@@ -126,7 +126,7 @@ while True:
         player.rect.y -= 4
 
     for i in enemies:
-        if timer >= 60:
+        if timer >= 180:
             i.rect.y -= i.velocity
 
     if not(is_game_over):
