@@ -18,6 +18,7 @@ pygame.mixer.music.set_volume(0.5)
 channel0 = pygame.mixer.Channel(0)
 channel1 = pygame.mixer.Channel(1)
 
+# Variables
 screen = pygame.display.set_mode((640, 480))
 
 clock = pygame.time.Clock()
@@ -28,7 +29,10 @@ score = 0
 
 font = pygame.font.Font("freesansbold.ttf", 20)
 
-# Player
+# Background
+background = pygame.image.load("Background.png")
+
+# Classes
 class Player:
     def __init__(self, startX, startY):
         self.startX = startX
@@ -46,6 +50,7 @@ class Enemy:
 
 # movement[0] = left, movement[1] = right, movement[2] = up, movement[3] = down.
 
+# Initial things
 player = Player(320, 360)
 
 # Enemies
@@ -57,8 +62,6 @@ for i in range(10):
 
 def resetTOOTHPast():
     global enemies
-    global timer
-    timer = 0
     for i in enemies:
         i.rect.x = random.randrange(0, screen.get_width() + 1)
         i.rect.y = i.img.get_height() * -1
@@ -71,7 +74,9 @@ def show_text(score):
     rendered_score = font.render("Toothpaste dodged: " + score, True, (0, 0, 0))
     screen.blit(rendered_score, (20, 20))
 
+# Game loop
 while True:
+    # Events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -95,13 +100,18 @@ while True:
             if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                 player.movement[3] = False
 
+    # Background
+    screen.fill((0, 200, 255))
+    screen.blit(background, (0, 0))
+
+    # Player movement
     player.velocity[0] = ((player.movement[0] * -1) + player.movement[1]) * 4
     player.velocity[1] = ((player.movement[2] * -1) + player.movement[3]) * 4
     player.rect.x += player.velocity[0]
     player.rect.y += player.velocity[1]
 
-    screen.fill((0, 200, 255))
 
+    # Prevent player from going off screen
     if player.rect.x <= 0:
         player.rect.x += 4
 
@@ -114,11 +124,13 @@ while True:
     if player.rect.y >= screen.get_height() - player.img.get_height():
         player.rect.y -= 4
 
-    for i in enemies:
-        if timer >= 120:
-            i.rect.y -= i.velocity
-
     if not is_game_over:
+        # Move toothpastes
+        for i in enemies:
+            if timer >= 120:
+                i.rect.y -= i.velocity
+
+        # Toothpaste appears
         for i in enemies:
             if i.rect.y >= screen.get_height():
                 channel0.play(ToothpasteAppearSFX, 0)
@@ -126,19 +138,21 @@ while True:
                 i.rect.x = random.randrange(0, screen.get_width() + 1)
                 score += 1
 
-    if not is_game_over:
+        # Check for player death
         for i in enemies:
             if player.rect.colliderect(i):
-                pygame.mixer.music.pause()
+                # Player died!!!
+                pygame.mixer.music.stop()
                 channel1.play(PlayerDeathSFX, 0)
                 is_game_over = True
                 timer = 0
                 break
 
-    if not is_game_over:
+        # Render enemies
         for i in enemies:
             screen.blit(i.img, (i.rect.x, i.rect.y))
 
+    # Render player
     screen.blit(player.img, (player.rect.x, player.rect.y))
 
     if is_game_over:
@@ -146,11 +160,13 @@ while True:
         screen.blit(game_over_img, (120, 80))
         # Wait 2 seconds
         if timer >= 120:
+            # Reset stuff
             is_game_over = False
             score = 0
             player.rect.x = player.startX
             player.rect.y = player.startY
             pygame.mixer.music.play()
+            timer = 0
             resetTOOTHPast()
     
     show_text(str(score))
